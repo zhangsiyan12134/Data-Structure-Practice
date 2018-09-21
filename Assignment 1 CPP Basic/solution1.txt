@@ -1,0 +1,334 @@
+/////////////////////////  Question 1 source file ////////////////////////
+/* File: polar.cpp
+This is a driver program for the function polar which computes the
+polar coordinates of a point in the plane
+Programmer: Siyan Zhang  Date: 2018-09-06
+*/
+
+#include <iostream>
+#include <cmath>
+#include <fstream>
+
+using namespace std;
+
+void polar(float &a, float &b);
+
+int main()
+{
+    float x, y;
+
+    ifstream fin ("polar.txt"); //open file for reading
+    ofstream fout ("polarout.txt"); //open file for output
+
+    while(fin >> x >> y)    //keep reading data from file until EOF
+    {
+        polar(x, y);    //call function to calculate polar coordinate
+        fout << x << " " << y << endl;  //print updated x and y
+    }
+
+    fin.close();    //close file for reading
+    fout.close();   //close file for output
+
+    return 0;
+}
+
+void polar(float &a, float &b)
+{
+    float r;    //init an variable to temporarily store radius
+    r = sqrt(pow(a, 2) + pow(b, 2));    //calculate the radius
+    if(r > 0 && b > 0)  //conditions for different r&b combination
+    {
+        b = acos(a/r);  //update data in variable "y" with calculated angle
+    }
+    if(r > 0 && b <= 0)
+    {
+        b = -acos(a/r); //update data in variable "y" with calculated angle
+    }
+    if(r == 0)
+    {
+        b = 0;  //update data in variable "y" with calculated angle
+    }
+    a = r;  //update data in variable "x" with calculated radius
+
+    return;
+}
+
+/////////////////////////  Question 1 output file /////////////////////////
+2.23607 1.10715
+2.23607 2.03444
+2.23607 -2.03444
+2.23607 -1.10715
+
+
+/////////////////////////  Question 2 source file ////////////////////////
+/* File: intializearray.cpp This program uses a number of different functions to initialize an array
+Programmer: Siyan Zhang       Date: 2018-09-07
+*/
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+float *init();
+float *init(int n);
+float *init(int n, float val);
+
+/* prototypes */
+int main(void)
+{
+    float* x; float val; int n;
+
+    n = 1; x = init();
+    cout << "\nx = \n"; for(int i=0; i< n; i++) { cout << x[i] << endl; }
+    delete [] x;
+
+    n = 4; x = init(n);
+    cout << "\nx = \n"; for(int i=0; i< n; i++) { cout << x[i] << endl; }
+    delete [] x;
+
+    n = 5; val = 1.27; x = init(n, val);
+    cout << "\nx = \n"; for(int i=0; i< n; i++) { cout << x[i] << endl; }
+    delete [] x;
+
+    return 0;
+}
+
+float *init()   //function returns the address of x
+{
+    float* x; //init a pointer
+    x = new float[1]; //create an array at pointer x with size of n
+    x[0] = {0.0}; //fill up array with 0.0
+    return x;   //return the memory address of array x
+}
+
+
+float *init(int n)   //function returns the address of x
+{
+    float* x; //init a pointer
+    x = new float[n]; //create an array at pointer x with size of n
+    for(int i = 0; i < n; i++) {x[i] = 0.0;} //fill up array elements with 0.0
+    return x;   //return the memory address of array x
+}
+
+float *init(int n, float val)   //function returns the address of x
+{
+    float* x; //init a pointer
+    x = new float[n]; //create an array at pointer x with size of n
+    for(int i = 0; i < n; i++) {x[i] = val;} //fill up array elements with "val"
+    return x;   //return the memory address of array x
+}
+
+/////////////////////////  Question 2 output  ////////////////////////////
+x =
+0
+
+x =
+0
+0
+0
+0
+
+x =
+1.27
+1.27
+1.27
+1.27
+1.27
+
+Process returned 0 (0x0)   execution time : 0.040 s
+Press any key to continue.
+
+/////////////////////////  Question 3 source file ////////////////////////
+/* File: intializearray.cpp This program uses a number of different functions to initialize an array
+Programmer: Siyan Zhang       Date: 2018-09-07
+*/
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+/* prototypes */
+float *init(int n = 1, float val = 0.0); //function prototype with default parameters
+
+int main(void)
+{
+    float* x; float val; int n;
+
+    n = 1; x = init();
+    cout << "\nx = \n"; for(int i=0; i< n; i++) { cout << x[i] << endl; }
+    delete [] x;
+
+    n = 4; x = init(n);
+    cout << "\nx = \n"; for(int i=0; i< n; i++) { cout << x[i] << endl; }
+    delete [] x;
+
+    n = 5; val = 1.27; x = init(n, val);
+    cout << "\nx = \n"; for(int i=0; i< n; i++) { cout << x[i] << endl; }
+    delete [] x;
+
+    return 0;
+}
+
+float *init(int n, float val)   //function returns the address of x
+{
+    float* x; //init a pointer
+    x = new float[n]; //create an array at pointer x with size of n
+    for(int i = 0; i < n; i++) {x[i] = val;} //fill up array with "val"
+    return x;   //return the memory address of array x
+}
+
+/////////////////////////  Question 3 output file ////////////////////////x =
+0
+
+x =
+0
+0
+0
+0
+
+x =
+1.27
+1.27
+1.27
+1.27
+1.27
+
+Process returned 0 (0x0)   execution time : 0.026 s
+Press any key to continue.
+
+/////////////////////////  Question 4 source file ////////////////////////
+/* File: minmax.cpp
+Programmer: Siyan Zhang  Date: 2018-09-06
+*/
+
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+const int N = 100; // maximum array size
+
+void readdata(int &n, float *x);
+void minmax(int n, float *x, float &min, float &max);
+
+int main(void)
+{
+    ofstream outfile("minmaxout.txt");
+
+    float x[N]; // the array
+    int n ; // the actual array size
+    float max; // the maximum
+    float min; // the minimum
+    /* read the data into the array */
+    readdata(n, x);
+    /* compute the maximum and minimum */
+    minmax(n, x, min, max);
+    outfile << "The array has " << n << " elements\n";
+    outfile << "The maximum value in the array is " << max << endl;
+    outfile << "The minimum value in the array is " << min << endl;
+    outfile.close();
+    return 0;
+}
+
+void readdata(int &n, float *x)
+{
+    int i;  //init a temp counter
+    ifstream infile ("minmax.txt"); //open file for read
+    infile >> n;    //read very first value
+    for(i = 0; i < n; i++)  //for loop for data reading
+    {
+        infile >> x[i]; //read each line into array
+    }
+    infile.close(); //close file
+    return;
+}
+
+void minmax(int n, float *x, float &min, float &max)
+{
+    int i;  //init a temp counter
+    for(i = 0; i < n; i++)  //for loop for data comparison
+    {
+        if(i == 0)    //init "min" & "max" with extreme value
+        {
+            min = 3.4E+38;  //assign maximum value of float for "min" to avoid true data is smaller than random data inside.
+            max = 1.8E-38;  //assign minimum value of float for "max" to avoid true data is bigger than random data inside.
+        }
+        if(x[i] <= min) {min = x[i];}   //compare data in "min" with array element, replace data in "min" if current array element is smaller
+        if(x[i] >= max) {max = x[i];}   //compare data in "max" with array element, replace data in "max" if current array element is greater
+    }
+    return;
+}
+
+/////////////////////////  Question 4 output file ////////////////////////
+The array has 80 elements
+The maximum value in the array is 63.606
+The minimum value in the array is 4.8089
+
+/////////////////////////  Question 5 source file ////////////////////////
+/* File: minmax.cpp
+Programmer: Siyan Zhang  Date: 2018-09-06
+*/
+
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+void readdata(int &n, float *&x);
+void minmax(int n, float *&x, float &min, float &max);
+
+int main(void)
+{
+    ofstream outfile("minmaxout.txt");
+
+    float *x; // init a pointer
+    int n ; // the actual array size
+    float max; // the maximum
+    float min; // the minimum
+    /* read the data into the array */
+    readdata(n, x);
+    /* compute the maximum and minimum */
+    minmax(n, x, min, max);
+    outfile << "The array has " << n << " elements\n";
+    outfile << "The maximum value in the array is " << max << endl;
+    outfile << "The minimum value in the array is " << min << endl;
+    outfile.close();
+    delete [] x;
+    return 0;
+}
+
+void readdata(int &n, float *&x)
+{
+    int i;  //init a temp counter
+    ifstream infile ("minmax.txt"); //open file for read
+    infile >> n;    //read very first value
+    x = new float[n];   //create array with pointer x
+    for(i = 0; i < n; i++)  //for loop for data reading
+    {
+        infile >> x[i];  //read each line into array
+    }
+    infile.close(); //close file
+    return;
+}
+
+void minmax(int n, float *&x, float &min, float &max)
+{
+    int i;  //init a temp counter
+    for(i = 0; i < n; i++)  //for loop for data comparison
+    {
+        if(i == 0)  //init "min" & "max" with extreme value
+        {
+            min = 3.4E+38;  //assign maximum value of float for "min" to avoid true data is smaller than random data inside.
+            max = 1.8E-38;  //assign minimum value of float for "max" to avoid true data is bigger than random data inside.
+        }
+        if(x[i] <= min) {min = x[i];}   //compare data in "min" with array element, replace data in "min" if current array element is smaller
+        if(x[i] >= max) {max = x[i];}   //compare data in "max" with array element, replace data in "max" if current array element is greater
+    }
+    return;
+}
+
+/////////////////////////  Question 5 output file ////////////////////////
+The array has 80 elements
+The maximum value in the array is 63.606
+The minimum value in the array is 4.8089
+
