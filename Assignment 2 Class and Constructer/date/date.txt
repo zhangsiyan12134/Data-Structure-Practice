@@ -1,0 +1,7 @@
+For the date is 12/6/2010
+Day number is 163
+
+For the date is 14/9/2012
+Day number is 257
+
+Days between 12/6/2010 and 14/9/2012 = 824
