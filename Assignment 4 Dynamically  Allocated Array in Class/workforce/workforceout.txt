@@ -1,0 +1,21 @@
+
+w = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+v = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+w = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000

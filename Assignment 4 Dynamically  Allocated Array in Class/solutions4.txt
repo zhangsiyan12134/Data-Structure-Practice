@@ -1,0 +1,581 @@
+/*********************** Question 1 source file ********************/
+
+/*  File: cylinder.cpp
+classes which represents points, circles and cylinders in the plane
+Name: Siyan Zhang   Date: 2018-10-05
+*/
+#include <iostream>
+#include <fstream>
+using namespace std;
+class point {
+	private:
+		float x;
+		float y;
+	public:
+		point(float h, float v);            // x = h and y = v
+		void write(ostream &out) const;     // write a point in the form (x,y)
+};
+class circle {
+	private:
+		point centre;
+		float radius;
+	public:
+		circle(const point &p, float r);
+		void write(ostream &out) const;
+};
+class cylinder {
+	private:
+		circle base;
+		float height;
+	public:
+		cylinder(const circle &c, float ht);
+		void write(ostream &out) const;
+};
+int main(void)
+{
+	point p(1.0, 2.0);
+	cout << "p = ";
+	p.write(cout);
+	cout << endl;
+	circle cir(p, 3.0);
+	cout << "cir = ";
+	cir.write(cout);
+	cout << endl;
+	cylinder cyl(cir, 7.0);
+	cout << "cyl = ";
+	cyl.write(cout);
+	cout << endl;
+	return 0;
+}
+//////////////////////////// implementation of point //////////////////////
+point::point(float h, float v) // x = h and y = v
+{
+	x = h;
+	y = v;
+}
+void point::write(ostream &out) const // write a point in the form (x,y)
+{
+	out << "(" << x << "," << y << ")";
+}
+/////////////////////////// implementation of circle ///////////////////////
+circle::circle(const point &p, float r) :centre(p)
+{
+	radius = r;
+}
+void circle::write(ostream &out) const
+{
+	out << "(center = ";
+	centre.write(out);
+	out << ", radius = " << radius << ")";
+}
+/////////////////////////// implementation of cylinder//////////////////////
+cylinder::cylinder(const circle &c, float ht) :base(c)
+{
+	height = ht;
+}
+void cylinder::write(ostream &out) const
+{
+	out << "(base = ";
+	base.write(out);
+	out << ", height = " << height << ")";
+}
+
+/*********************** Question 1 output file ********************/
+p = (1,2)
+cir = (center = (1,2), radius = 3)
+cyl = (base = (center = (1,2), radius = 3), height = 7)
+
+Process returned 0 (0x0)   execution time : 0.027 s
+Press any key to continue.
+
+/*********************** Question 2 source file ********************/
+/*  File: employeetime.cpp
+Illustrates composition of classes
+Name: Siyan Zhang   Date: 2018-10-05
+*/
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class time24 {
+	private:
+		int hour_;                         // hour between 0 and 23
+		int minute_;                       // minute between 0 and 59
+	public:
+		time24(int h, int m);              // constructor
+		void write(ostream &out) const;     // prints hour:minute to out
+};
+
+class employee {
+	private:
+		string name;  // last name
+		int id;       // employee id number
+		float salary; // employee salary
+		time24 start; // workday start time
+	public:
+		employee(string n, int i, float s, const time24 &t);
+		employee(string n, int i, float s, int h, int m);
+		void write(ostream &out) const;
+};
+
+int main(void)
+{
+	time24 u(8, 0);
+	employee x("Jones", 123, 45000.0, u);
+	employee y("Smith", 124, 50000.0, 8, 30);
+	cout << "x =  "; x.write(cout); cout << endl;
+	cout << "y =  "; y.write(cout); cout << endl;
+	return 0;
+}
+//////////////////// Implementation of time24 ///////////////////////////
+time24::time24(int h, int m)
+{
+	hour_ = h;
+	minute_ = m;
+}
+void time24::write(ostream &out) const
+{
+	out << hour_ /10 << hour_ % 10 << ":" << minute_ / 10 << minute_ %10;
+}
+////////////////////// implementation of employee /////////////////////
+employee::employee(string n, int i, float s, const time24 &t) :start(t)
+{
+	name = n;
+	id = i;
+	salary = s;
+}
+employee::employee(string n, int i, float s, int h, int m) :start(h,m)
+{
+	name = n;
+	id = i;
+	salary = s;
+}
+void employee::write(ostream &out) const
+{
+	out << "{" << name << ", " << id << ", " << salary << ", ";
+	start.write(out);
+	out << "}";
+}
+
+/*********************** Question 2 output file ********************/
+x =  {Jones, 123, 45000, 08:00}
+y =  {Smith, 124, 50000, 08:30}
+
+Process returned 0 (0x0)   execution time : 0.012 s
+Press any key to continue.
+
+/*********************** Question 3 source file ********************/
+
+/*  File: workforce.cpp
+An employee's information is stored as an object of type employee
+consisting of name, employee id and employee salary.  The methods
+read() and write() are defined for employee.
+Information about a company's workforce is stored in an object of type
+workforce consisting of the workforce size and a dynamically allocated
+array of employees.  The methods read() and write() are defined for
+workforce.
+The read() and write() methods for workforce uses the read()and write()
+methods for employee
+Programmer: Siyan Zhang            Date: 2018-10-05
+*/
+#include <iostream>
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+class employee {
+	private:
+		string name;  // last name
+		int id;       // employee id number
+		float salary; // employee salary
+	public:
+		employee(string n = "nobody", int i = 0, float s = 0);
+		void read(istream &in);
+		void write(ostream &out) const;
+};
+class workforce {
+	private:
+		int size;           // size of workforce
+		employee* list; // array of employees
+	public:
+		workforce(int n);   // set size = n and allocate an array of employees
+		// big 3 prototypes here
+		workforce(const workforce &x);
+		~workforce(void);
+		workforce& operator=(const workforce &x);
+		void read(istream &in);
+		void write(ostream &out) const;
+};
+int main(void)
+{
+	workforce w(5);
+	ifstream fin("workforcein.txt"); // file containing the list of employees
+	ofstream fout("workforceout.txt");
+	char ch;
+	w.read(fin);
+	fout << "\nw = \n";
+	w.write(fout);
+	cout << "C to copy otherwise assign: ";
+	cin >> ch;
+	if(ch == 'C') {
+		workforce v(w);     // v's scope is the body of the if
+		fout << "\nv = \n";
+		v.write(fout);
+		// v is destroyed here
+	} else {
+		workforce u(10);    // u's scope is the body of the else
+		u = w;
+		fout << "\nu = \n";
+		u.write(fout);
+		// u is destroyed here
+	}
+	fout << "\nw = \n";     // check whether w is still intact
+	w.write(fout);
+	fin.close();
+	fout.close();
+	return 0;
+}
+////////////////////// implementation of employee ////////////////////////
+employee::employee(string n, int i, float s)
+{
+	name = n;
+	id = i;
+	salary = s;
+}
+void employee::read(istream &in)
+{
+	in >> name >> id >> salary;
+}
+void employee::write(ostream &out) const
+{
+	out << name << " " << id << " " << salary << endl;
+}
+/////////////////////// implementation of workforce //////////////////////
+workforce::workforce(int n)
+{
+	size = n;
+	list = new employee [n];
+}
+workforce::workforce(const workforce &x)
+{
+	size = x.size;
+	list = new employee[size];
+	for(int i = 0; i < size; i++)
+	{
+		list[i] = x.list[i];
+	}
+}
+workforce::~workforce(void)
+{
+	delete [] list;
+}
+workforce& workforce::operator=(const workforce &x)
+{
+	if(this != &x)
+	{
+		delete [] list;
+		size = x.size;
+		list = new employee[size];
+		for(int i = 0; i < size; i++)
+		{
+			list[i] = x.list[i];
+		}
+	}
+	return *this;
+}
+void workforce::read(istream &in)
+{
+	for(int i = 0; i < size; i++)
+	{
+		list[i].read(in);
+	}
+}
+void workforce::write(ostream &out) const
+{
+	for(int i = 0; i < size; i++)
+	{
+		list[i].write(out);
+	}
+}
+
+
+/*********************** Question 3 output file ********************/
+Copy:
+
+w = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+v = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+w = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+Assign:
+
+
+w = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+u = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+w = 
+Smith 123 34000
+Jones 189 38000
+Black 342 45000
+White 111 49000
+Green 200 35000
+
+/*********************** Question 4 source file ********************/
+/* File: matrices.cpp
+represent a matrix as a class with operator overloading
+Name: Siyan Zhang   Date: 2018-10-08
+*/
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <iomanip>
+
+using namespace std;
+
+class matrix {
+	private:
+		int rows_;       // number of rows
+		int cols_;       // number of columns
+		float* elements; // pointer to a 1 dimensional array which stores the
+		// columns of the matrix one after another
+		/*
+		the matrix                       the array elements
+		+-               -+         [a00,a10,a20,...,a01,a11,a21,...,a02,a12,a22,...]
+		| a00 a01 a02 ... |              ^               ^               ^
+		| a10 a11 a12 ... |              |               |               |
+		| a20 a21 a22 ... |              |               |               |
+		|  .   .   .  ... |              |               |               |
+		|  .   .   .  ... |           column 0        column 1        column 3
+		+-               -+
+		*/
+	public:
+		matrix(int m=1, int n=1, float s = 0.0);  // constructor
+		~matrix(void);                            // destructor
+		matrix(const matrix &other);              // copy constructor
+		matrix &operator=(const matrix &rhs);     // operator=
+		int rows(void) const;                     // returns rows_
+		int cols(void) const;                     // returnc cols_
+		float at(int i, int j) const;             // returns the (i,j) entry
+		float &at (int i, int j);                 // returns the (i,j) entry
+};
+
+// prototypes for matrix operators
+matrix operator+(const matrix &x, const matrix &y);
+matrix operator*(const matrix &x, const matrix &y);
+istream& operator>>(istream &infile, matrix &x);
+ostream& operator<<(ostream &outfile, const matrix &x);
+
+int main(void)
+{
+	ifstream fin("matricesin.txt");
+	ofstream fout("matricesout.txt");
+	matrix a(2,2), b(2,2), c(2,4);
+	fin >> a >> b >> c;
+	// try the copy constructor
+	matrix d(a);
+	fout << "The copy of a is\n";
+	fout << d << "\n";
+	d = a + b; // check out operator= and operator+
+	fout << "The sum of \n" << a << "and\n" << b << "is\n" << d;
+	d = a * c; // check out operator= and operator*
+	fout << "\nThe product of \n" << a << "and\n" << c << "is\n" << d;
+	fin.close();
+	fout.close();
+	return 0;
+}
+//////////////////////// implementation of matrix ///////////////////////
+
+
+// constructor, fill all values with s, default 1x1, s = 0.0
+matrix::matrix(int m, int n, float s)
+{
+	int i;
+	rows_ = m;
+	cols_ = n;
+	elements = new float[m*n];
+	for(i = 0; i < m*n; i++) {
+		elements[i] = s;
+	}
+}
+// implementation of the big 3
+matrix::~matrix(void)
+{
+	delete [] elements;
+}
+matrix::matrix(const matrix &other)
+{
+	cols_ = other.cols_;
+	rows_ = other.rows_;
+	elements = new float [rows_ * cols_];
+	for(int i = 0; i < rows_ * cols_; i++)
+	{
+		for(int j = 0; j < rows_ * cols_; j++)
+		{
+			elements[i] = other.elements[i];
+		}
+	}
+}
+matrix& matrix::operator=(const matrix &rhs)
+{
+	if(this != &rhs)
+	{
+		delete [] elements;
+		cols_ = rhs.cols_;
+		rows_ = rhs.rows_;
+		elements = new float[cols_* rows_];
+		for(int i = 0; i < rows_ * cols_; i++)
+		{
+            elements[i] = rhs.elements[i];
+		}
+	}
+	return *this;
+}
+
+// returns the (i,j) entry of the matrix by reference
+float &matrix::at(int i, int j)
+{
+	if( (i >= rows_) || (j >= cols_) ){
+		cerr << "subscript out of bounds\n";
+		exit(1);
+	}
+	return elements[ i +j*rows_ ];
+}
+// returns the (i,j) entry of the matrix
+float matrix::at(int i, int j) const
+{
+	if( (i >= rows_) || (j >= cols_) ){
+		cerr << "subscript out of bounds\n";
+		exit(1);
+	}
+	return elements[ i +j*rows_ ];
+}
+
+int matrix::rows(void) const
+{
+	return rows_;
+}
+int matrix::cols(void) const
+{
+	return cols_;
+}
+///////////////////////////// matrix operators ///////////////////////////
+matrix operator+(const matrix &x, const matrix &y)
+{
+	if(x.rows() == y.rows() && x.cols() == y.cols())
+	{
+		matrix sum(x.rows(), x.cols());
+		for(int i = 0; i < x.rows(); i++)
+		{
+			for(int j = 0; j < x.cols(); j++)
+			{
+				sum.at(i,j) = x.at(i,j) + y.at(i,j);
+			}
+		}
+		return sum;
+	} else
+	{
+		cout << "error: size of matrices are not match!";
+		exit(1);
+	}
+}
+matrix operator*(const matrix &x, const matrix &y)
+{
+	if(x.cols() == y.rows())
+	{
+		matrix product(x.rows(), y.cols());
+		for(int i = 0; i < x.rows(); i++)
+		{
+			for(int j = 0; j < y.cols(); j++)
+			{
+			    for(int k = 0; k < x.cols(); k++)
+                {
+                    product.at(i,j) = product.at(i,j) + x.at(i,k) * y.at(k,j);
+                }
+			}
+		}
+		return product;
+	} else
+	{
+		cout << "error: size of matrices are not match!";
+		exit(1);
+	}
+}
+
+istream& operator>>(istream &infile, matrix &x)
+{
+    for(int i = 0; i < x.rows(); i++)
+    {
+        for(int j = 0; j < x.cols(); j++)
+        {
+            infile >> x.at(i,j);
+        }
+    }
+    return infile;
+}
+
+ostream& operator<<(ostream &outfile, const matrix &x)
+{
+    for(int i = 0; i < x.rows(); i++)
+    {
+        for(int j = 0; j < x.cols(); j++)
+        {
+            outfile << setw(6)<< x.at(i,j) << "\t";
+        }
+        outfile << endl;
+    }
+    return outfile;
+}
+
+/*********************** Question 4 output file ********************/
+The copy of a is
+   1.5	   2.7	
+   3.1	   4.4	
+
+The sum of 
+   1.5	   2.7	
+   3.1	   4.4	
+and
+   3.2	   4.5	
+   1.1	   2.9	
+is
+   4.7	   7.2	
+   4.2	   7.3	
+
+The product of 
+   1.5	   2.7	
+   3.1	   4.4	
+and
+   1.9	   1.2	     0	   2.7	
+   2.9	   3.6	   2.1	   1.1	
+is
+ 10.68	 11.52	  5.67	  7.02	
+ 18.65	 19.56	  9.24	 13.21	
