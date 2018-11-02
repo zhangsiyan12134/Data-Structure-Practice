@@ -1,0 +1,15 @@
+
+name  : white
+id    : 3434
+salary: 41000
+department: shipping
+
+name  : black
+id    : 565
+salary: 54000
+title: accountsmanager
+
+name  : Green
+id    : 234
+salary: 79000
+number of publications: 23
