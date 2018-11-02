@@ -1,0 +1,4 @@
+A dynamic stacq of integers
+4 3 2 1 
+4 3 2 
+3 2 

@@ -1,0 +1,466 @@
+/*********************** Question 1 source file ********************/
+// File: stacksentinal.cpp
+// This program implements a simple stack of integers using a linked list
+// with a sentinel
+//Programmer: Siyan Zhang
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class node {
+
+friend class stack;  // stack needs access to node's members
+
+private:
+    int data;   // this is the data in a stack node
+    node *next; // pointer to the next stack node
+
+public:
+    node(int x); // data = x, next = NULL
+};
+
+class stack {
+private:
+    node sentinel; // sentinel for the stack
+
+public:
+    stack(void);                        // constructor
+    void push(int x);
+    int pop(void);
+    bool empty(void) const;             // check for empty stack
+    void write(ostream &out) const;     // write the stack to out
+};
+
+int main(void)
+{
+    stack mystack;
+    ofstream fout ("stacksentinelout.txt");
+    char ch;
+    int x;
+
+    cout << "A dynamic stack of integers\n";
+    fout << "A dynamic stack of integers\n";
+
+    do {
+        // print a little menu
+        cout << "\n\np = push \n";
+        cout << "o = pop\n";
+        cout << "s = print to screen\n";
+        cout << "f = print to file\n";
+        cout << "q = quit\n\n";
+
+        cin >> ch;
+
+        if (ch == 'p') {
+            cout <<"\ndata to push :";
+            cin >> x;
+            mystack.push(x);
+        }
+        else if(ch == 'o') {
+            if(mystack.empty()) {
+                cout << "Stack is empty\n";
+            } else {
+                cout << "\n\ndata popped : " << mystack.pop();
+            }
+        }
+        else if(ch == 's') mystack.write(cout);
+        else if(ch == 'f') mystack.write(fout);
+
+    }while(ch != 'q');
+
+    fout.close();
+    return 0;
+}
+
+node::node(int x)
+{
+    data = x;
+    next = NULL;
+}
+
+stack::stack(void):sentinel(0)
+{
+}
+void stack::push(int x)
+{
+	node *ptr;
+	ptr = new node(x);
+	ptr->next = sentinel.next;
+	sentinel.next = ptr;
+}
+int stack::pop(void)
+{
+	int temp = 0;
+	temp = sentinel.next->data;
+	node *ptr = sentinel.next;
+	sentinel.next = ptr->next;
+	delete ptr;
+
+	return temp;
+}
+bool stack::empty(void) const
+{
+	if(sentinel.next == NULL)
+	{
+		return 1;
+	} else
+	{
+		return 0;
+	}
+}
+void stack::write(ostream &out) const
+{
+	node *ptr = sentinel.next;
+	while(ptr != NULL)
+	{
+		out << ptr->data << " ";
+		ptr = ptr->next;
+	}
+	out << endl;
+}
+
+/*********************** Question 1 output file ********************/
+A dynamic stack of integers
+4 3 2 1 
+2 1 
+
+
+/*********************** Question 2 source file ********************/
+// File: stacq.cpp
+// This program implements a cross between a stack and a queue
+//Programmer: Siyan Zhang
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class node {
+friend class stacq;
+
+private:
+   int data;   // this is the data in a stacq element
+   node *next; // pointer to the next node on the stack
+
+public:
+   node(int x) {data = x; next = NULL;}
+
+};
+
+class stacq {
+private:
+   int count;   // number of values stored
+   node* top;   // pointer to the top of the stacq
+
+public:
+   stacq(void);                   // constructor of an empty stacq
+   void store(int x);             // store the value x
+   int retrieve(void);            // retrieve a value
+   bool empty(void) const;        // check for empty stack
+   void write(ostream &out) const; // write stacq to out
+};
+
+int main(void)
+{
+   stacq mine;
+   ofstream fout ("stacqout.txt");
+   char ch;
+   int x;
+
+   cout << "A dynamic stacq of integers\n";
+   fout << "A dynamic stacq of integers\n";
+
+   do {
+      // print a little menu
+      cout << "\n\ns = store \n";
+      cout << "r = retrieve\n";
+      cout << "p = print to screen\n";
+      cout << "f = print to file\n";
+      cout << "q = quit\n\n";
+
+      cin >> ch;
+
+      if (ch == 's') {
+         cout <<"\ndata to store :";
+         cin >> x;
+         mine.store(x);
+      }
+      else if(ch == 'r') {
+         if(mine.empty())
+            cout << "empty\n";
+         else
+            cout << "\n\ndata retrieved :" << mine.retrieve();
+      }
+      else if(ch == 'p') mine.write(cout);
+      else if(ch == 'f') mine.write(fout);
+
+   }while(ch != 'q');
+
+   fout.close();
+   return 0;
+}
+
+stacq::stacq(void)
+{
+    count = 0;
+    top = NULL;
+}
+void stacq::store(int x)
+{
+	node *ptr;
+	ptr = new node(x);
+	if(top != NULL)	//check if stack is empty
+    {
+        ptr->next = top;
+        top = ptr;
+    } else
+    {
+        ptr->next = NULL;	//special case for very first node
+        top = ptr;
+    }
+	count++;
+}
+int stacq::retrieve(void)
+{
+	int temp;
+	if(count % 2)	//Check if odd re even
+	{
+		temp = top->data;
+		node *ptr = top;
+		top = ptr->next;
+		delete ptr;
+	} else
+	{
+		node *ptr = top;	//pointer for last node
+		node *ptr2 = top;	//pointer for second last node
+		while(ptr->next != NULL)	//keep tracking back until last node
+		{
+			ptr2 = ptr;
+			ptr = ptr->next;
+		}
+		temp = ptr->data;
+		ptr2->next = NULL;
+		if(ptr == top)	//special case for last node in stack
+		{
+			top = NULL;
+		}
+		delete ptr;
+	}
+	count--;
+	return temp;
+}
+bool stacq::empty(void) const
+{
+	if(top != NULL)
+	{
+		return 0;
+	} else
+	{
+		return 1;
+	}
+}
+void stacq::write(ostream &out) const
+{
+	node *ptr = top;
+	while(ptr != NULL)
+	{
+		out << ptr->data << " ";
+		ptr = ptr->next;
+	}
+	out << endl;
+}
+/*********************** Question 2 output file ********************/
+A dynamic stacq of integers
+4 3 2 1 
+4 3 2 
+3 2 
+
+/*********************** Question 3 source file ********************/
+/* File: deque.cpp
+   This program implements a double ended queue of integers as a
+   doubly linked list */
+//Programmer: Siyan Zhang
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+class node {
+friend class deque;
+
+private:
+    int data;   // this is the data in a list element
+    node *next; // pointer to the next node in the list
+    node *prev; // pointer to the previous node in the list
+
+public:
+    node(int x); // data = x, prev=next = NULL
+};
+
+class deque
+{
+   private:
+      node* front;      // pointer to the front of the list
+      node* back;       // pointer to the back of the list
+
+   public:
+      deque(void);             // constructor of an empty queue
+      void put_front(int x);   // put x at the front of the list
+      void put_back(int x);    // put x at the back of the list
+      int get_front(void);     // get the node at the front of the list
+      int get_back(void);      // get the node at the back of the list
+      bool empty(void) const;        // check for empty deque
+      void write(ostream &out) const; // write data stored to out
+};
+int main(void)
+{
+    deque mydeque;
+    ofstream fout ("dequeout.txt");
+    char ch;
+    int x;
+
+    cout << "A dynamic deque of integers\n";
+    fout << "A dynamic deque of integers\n";
+
+    do {
+        // print a little menu
+        cout << "\n\n1 = put front \n";
+        cout << "2 = put back \n";
+        cout << "3 = get front\n";
+        cout << "4 = get back\n";
+        cout << "s = print to screen\n";
+        cout << "f = print to file\n";
+        cout << "q = quit\n\n";
+
+        cin >> ch;
+
+        if (ch == '1') {
+            cout <<"\ndata to put front:";
+            cin >> x;
+            mydeque.put_front(x);
+        }
+        else if (ch == '2') {
+            cout <<"\ndata to put back:";
+            cin >> x;
+            mydeque.put_back(x);
+        }
+        else if(ch == '3') {
+            if(mydeque.empty()) {
+                cout << "deque is empty\n";
+            } else {
+                cout << "\n\ndata gotten : " << mydeque.get_front();
+            }
+        }
+        else if(ch == '4') {
+            if(mydeque.empty()) {
+                cout << "deque is empty\n";
+            } else {
+                cout << "\n\ndata gotten : " << mydeque.get_back();
+            }
+        }
+        else if(ch == 's') mydeque.write(cout);
+        else if(ch == 'f') mydeque.write(fout);
+
+    }while(ch != 'q');
+
+    fout.close();
+    return 0;
+}
+
+node::node(int x)
+{
+    data = x;
+    next = NULL;
+    prev = NULL;
+}
+
+deque::deque(void)
+{
+    front = NULL;
+    back = NULL;
+}
+void deque::put_front(int x)
+{
+    node *ptr = new node(x);
+    if(front == NULL)
+    {
+        back = front = ptr;	//special case for very first node
+    } else
+    {
+        front->next = ptr;	//make old front point to the new node
+        ptr->prev = front;	//make new node point back to old front
+        front = ptr;	//point front pointer to new node
+    }
+}
+
+void deque::put_back(int x)
+{
+    node *ptr = new node(x);
+    if(back == NULL)
+    {
+        back = front = ptr;	//special case for very first node
+    } else
+    {
+        back->prev = ptr;	//make old back point to the new node
+        ptr->next = back;	//make new node point back to old back
+        back = ptr;		//point back pointer to new node
+    }
+}
+
+int deque::get_front(void)
+{
+    int temp = front->data;
+    if(front == back)
+    {
+        delete front;	//special case for very last node
+        front = back = NULL;	//set stack as empty
+    } else
+    {
+        node *ptr = front;	//create a new pointer to store current front node
+        front = ptr->prev;	//let front pointer point to second last node
+        front->next = NULL;	//let second last node point to NULL
+        delete ptr;	//delete last node
+    }
+    return temp;
+}
+
+int deque::get_back(void)
+{
+    int temp = back->data;
+    if(front == back)
+    {
+        delete back;	//special case for very last node
+        front = back = NULL;	//set stack as empty
+    } else
+    {
+        node *ptr = back;	//create a new pointer to store current back node
+        back = ptr->next;	//let back pointer point to second last node
+        back->prev = NULL;	//let second last node point to NULL
+        delete ptr;	//delete last node
+    }
+
+    return temp;
+}
+
+bool deque::empty(void) const
+{
+    return(front == NULL);
+}
+void deque::write(ostream &out) const
+{
+	node *ptr = back;
+	while(ptr != NULL)
+	{
+		out << ptr->data << " ";
+		ptr = ptr->next;
+	}
+	out << endl;
+}
+
+/*********************** Question 3 output file ********************/
+A dynamic deque of integers
+1 2 3 
+6 5 4 1 2 3 
+6 5 4 1 2 
+5 4 1 2 
+
