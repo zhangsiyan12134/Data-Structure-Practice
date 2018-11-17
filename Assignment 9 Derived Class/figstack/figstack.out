@@ -1,0 +1,21 @@
+popped:
+x coordinate: 5
+y coordinate: 6
+area = 12
+side1 = 3
+side2 = 4
+
+popped:
+x coordinate: 3
+y coordinate: 4
+area = 1
+side1 = 1
+side2 = 2
+angle = 1
+
+popped:
+x coordinate: 1
+y coordinate: 2
+area = 28.2743
+radius = 3
+
