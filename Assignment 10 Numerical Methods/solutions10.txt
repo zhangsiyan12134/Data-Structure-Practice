@@ -1,0 +1,194 @@
+/*********************** Question 1 source file ********************/
+//programmer: Siyan Zhang
+matrix solve(matrix a, matrix b)
+{
+	int k_max;
+	if(a.rows() != b.rows()) {
+        cerr << "matrices not compatible\n";
+        exit(1);
+    }
+    if(a.rows() != a.cols()) {
+        cerr << "coefficient matrix is not square\n";
+        exit(1);
+    }
+    //find the row, k, with k >= p where |a(k,p)| is largest
+    for(int p = 0; p < a.rows(); p++)
+    {
+        k_max = p;
+    	for(int j = p + 1; j < a.cols(); j++)
+    	{
+    		if(fabs(a(j, p)) > fabs(a(k_max, p)))
+    		{
+    			k_max = j;
+			}
+		}
+		if(fabs(a(k_max, p)) < matrix::tiny) {
+        	cerr << "coefficent matrix is not invertible\n";
+        	exit(1);
+   		}
+		//interchange rows k and p of the matrix a
+		for(int i = 0; i < a.cols(); i++)
+		{
+			float tmp;
+			tmp = a(k_max, i);
+			a(k_max, i) = a(p, i);
+			a(p, i) = tmp;
+		}
+		//interchange rows k and p of the matrix b
+		for(int i = 0; i < b.cols(); i++)
+		{
+			float tmp;
+			tmp = b(k_max, i);
+			b(k_max, i) = b(p, i);
+			b(p, i) = tmp;
+		}
+		//divide through row p of a by a(p,p)
+		float pivot = a(p, p);
+		for(int i = p + 1; i < a.cols(); i++)
+		{
+			a(p, i) = a(p, i)/pivot;
+		}
+        a(p, p) = 1.0;
+		//divide through row p of b by a(p,p)
+		for(int i = 0; i < b.cols(); i++)
+		{
+			b(p, i) = b(p, i)/pivot;
+		}
+
+		//makes a(i,p) and b(i,p) = 0
+		float factor;
+		for(int i = 0; i < a.rows(); i++)
+		{
+			if(i == p) continue;
+			factor = a(i, p);
+            for(int j = p; j < a.cols(); j++)
+            {
+                a(i,j) = a(i,j) - factor*a(p, j);
+            }
+            for(int j = 0; j < b.cols(); j++)
+            {
+                b(i,j) = b(i,j) - factor*b(p, j);
+            }
+		}
+	}
+    return b;
+}
+
+/*********************** Question 1 output file ********************/
+a =
+     1.00000     2.00000
+     2.00000     3.00000
+
+
+b =
+     5.00000     4.00000     1.00000     2.00000
+     2.00000     1.00000     3.00000     4.00000
+
+
+x =
+   -11.00000   -10.00000     3.00000     2.00000
+     8.00000     7.00000    -1.00000     0.00000
+
+
+check a * x should be b
+     5.00000     4.00000     1.00000     2.00000
+     2.00000     1.00000     3.00000     4.00000
+
+
+
+Process returned 0 (0x0)   execution time : 0.062 s
+Press any key to continue.
+
+/*********************** Question 2 source file ********************/
+matrix inverse(const matrix& a)
+{
+    int n = a.rows();
+    matrix b = eye(n);
+    return solve(a, b);
+}
+/*********************** Question 2 output file ********************/
+a =
+     1.00000     2.00000
+     2.00000     3.00000
+
+
+inverse =
+    -3.00000     2.00000
+     2.00000    -1.00000
+
+
+check a * x should be the identity matrix
+     1.00000     0.00000
+     0.00000     1.00000
+
+
+
+Process returned 0 (0x0)   execution time : 0.012 s
+Press any key to continue.
+
+/*********************** Question 3 source file ********************/
+matrix leastsquares(const matrix& a, const matrix& b)
+{
+    matrix a1, b1;
+    a1 = transpose(a)*a;
+    b1 = transpose(a)*b;
+    return solve(a1, b1);
+}
+/*********************** Question 3 output file ********************/
+a =
+     1.00000     2.00000
+     2.00000     3.00000
+     1.00000     1.00000
+
+
+b =
+     5.00000
+     7.00000
+     1.00000
+
+
+x =
+    -2.66666
+     4.00000
+
+
+check a * x should be as close to b as possible
+     5.33333
+     6.66667
+     1.33333
+
+
+
+Process returned 0 (0x0)   execution time : 0.013 s
+Press any key to continue.
+
+/*********************** Question 4 source file ********************/
+matrix pseudoinverse(const matrix& a)
+{
+    matrix a1, a2;
+    a1 = transpose(a)*a;
+    a2 = inverse(a1);
+    return a2*transpose(a);
+}
+/*********************** Question 4 output file ********************/
+a =
+     1.00000     2.00000
+     2.00000     3.00000
+     1.00000     1.00000
+
+
+x =
+    -1.33333     0.33333     1.66667
+     1.00000     0.00000    -1.00000
+
+
+check x * a should be the identity matrix
+     1.00000    -0.00000
+     0.00000     1.00000
+
+
+
+Process returned 0 (0x0)   execution time : 0.012 s
+Press any key to continue.
+
+

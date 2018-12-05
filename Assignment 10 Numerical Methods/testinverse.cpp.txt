@@ -1,0 +1,26 @@
+/*  File: testinverse.cpp 
+    test the inverse function for the matrix class */
+    
+#include "matrix.h"
+
+int main(void)
+{
+    ifstream fin("testinversein.txt");
+
+    matrix a(2,2), x;
+    
+    fin >> a;
+
+    cout << "a = " << endl;
+    cout << a << endl << endl;
+
+    x = inverse(a);
+
+    cout << "inverse = " << endl;
+    cout << x << endl << endl;
+            
+    cout << "check a * x should be the identity matrix" << endl;
+    cout << a * x << endl << endl;
+    
+    return 0;
+}

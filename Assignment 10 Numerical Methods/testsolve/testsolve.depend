@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1542976710 source:c:\users\zhang\onedrive\documents\dalhousie university\2018 fall\engm3282-01 data structure\assignments\assignment 10\testsolve\matrix.cpp
+	"matrix.h"
+
+1542976710 c:\users\zhang\onedrive\documents\dalhousie university\2018 fall\engm3282-01 data structure\assignments\assignment 10\testsolve\matrix.h
+	<iostream>
+	<fstream>
+	<cstdlib>
+	<iomanip>
+	<cmath>
+	<vector>
+
+1543023217 source:c:\users\zhang\onedrive\documents\dalhousie university\2018 fall\engm3282-01 data structure\assignments\assignment 10\testsolve\main.cpp
+	"matrix.h"
+
